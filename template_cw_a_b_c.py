@@ -4,6 +4,11 @@
 
 # Task A: Input Validation
 
+import csv
+import os
+from collections import defaultdict
+
+
 def validate_date_input():
     
     day = None
@@ -16,36 +21,37 @@ def validate_date_input():
     - Correct range for day, month, and year
     """
    
+   # Get valid day input
     while day is None:
-        try:
-            day = int(input("Please enter the day of the survey in the format dd: "))
-            if day < 1 or day > 31:
-                print("Out of range - values must be in the range 1 and 31.")
-                day = None  
-        except ValueError:
-            print("Integer required") 
+        day = input("Please enter the day of the survey in the format dd: ").strip()
+        if not day.isdigit():
+            print("Integer required  ")
+            day = None
+        elif int(day) < 1 or int(day) > 31:
+            print("Out of range - values must be in the range 1 and 31. ")
+            day = None
 
     # Get valid month input
     while month is None:
-        try:
-            month = int(input("Please enter the month of the survey in the format MM: "))
-            if month < 1 or month > 12:
-                print("Out of range - values must be in the range 1 to 12.")
-                month = None  
-        except ValueError:
-            print("Integer required")  
-            
-            
+        month = input("Please enter the month of the survey in the format MM: ").strip()
+        if not month.isdigit():
+            print("Integer required  ")
+            month = None
+        elif int(month) < 1 or int(month) > 12:
+            print("Out of range - values must be in the range 1 to 12.")
+            month = None
+
+    # Get valid year input
     while year is None:
-        try:
-            year = int(input("Please enter the year of the survey in the format YYYY "))
-            if year < 2000 or year > 2024:
-                print("Out of range - values must range from 2000 and 2024. ")
-                year = None  
-        except ValueError:
-            print("Integer required")
-            
-   
+        year = input("Please enter the year of the survey in the format YYYY: ").strip()
+        if not year.isdigit():
+            print("Integer required ")
+            year = None
+        elif int(year) < 2000 or int(year) > 2024:
+            print("Out of range - values must range from 2000 to 2024.")
+            year = None
+    
+    # Return the date in DD/MM/YYYY format
     return day, month, year
 
 
@@ -58,7 +64,7 @@ def validate_continue_input():
 
 
 # Task B: Processed Outcomes
-def process_csv_data(file_path):
+def process_csv_data(folder_path,input_date):
     """
     Processes the CSV data for the selected date and extracts:
     - Total vehicles
@@ -66,13 +72,57 @@ def process_csv_data(file_path):
     - Total electric vehicles
     - Two-wheeled vehicles, and other requested metrics
     """
-    pass  # Logic for processing data goes here
+    
+    # Initialize variables to store counts
+    total_vehicles = 0
+    total_trucks = 0
+    total_electric = 0
+    two_wheeled_vehicles = 0
+    buses_north_elm_avenue = 0
+    no_turn_vehicles = 0
+    vehicles_over_speed_limit = 0
+    elm_avenue_vehicles = 0
+    hanley_highway_vehicles = 0
+    scooter_percentage_elm_avenue = 0
+    peak_hour_data = defaultdict(int)
+    rain_hours = 0
+    elm_avenue_vehicles_only = 0
+    hanley_highway_vehicles_only = 0
+    total_bicycles = 0
+    total_hours = 0
+
+    
+    csv_file = None
+    for filename in os.listdir(folder_path):
+        if filename.endswith(f"{input_date}.csv"):
+            csv_file = os.path.join(folder_path, filename)
+            print (csv_file)
+            break
+    
+    # If no file is found, print an error and return
+    if csv_file is None:
+        print(f"Error: No file found for the date {input_date}")
+        return
+    
+    
+    with open(csv_file, mode='r', newline='', encoding='utf-8') as file:
+        csv_reader = csv.DictReader(file)  # Reads the CSV into a dictionary format (fieldnames as keys)
+        
+        # Iterate through the rows and get the 'VehicleType' column
+        for index, row in enumerate(csv_reader):
+            # Print the first value from the 'VehicleType' column
+            if index == 0:  # Only print the first value
+                print(f"First Vehicle Type: {row['VehicleType']}")
+                break  # Exit the loop after the first row
+        else:
+            print("The file is empty or doesn't have the 'VehicleType' column.")
+     
 
 def display_outcomes(outcomes):
     """
     Displays the calculated outcomes in a clear and formatted way.
     """
-    pass  # Printing outcomes to the console
+    # Printing outcomes to the console
 
 
 # Task C: Save Results to Text File
@@ -85,7 +135,11 @@ def save_results_to_file(outcomes, file_name="results.txt"):
 # if you have been contracted to do this assignment please do not remove this line
 
 def main():
-    day, month, year =validate_date_input()
-    print (f"{day}-{month}-{year}")
+    folder_path = input("Enter the folder path containing the CSV files: ")
+    day , month, year = validate_date_input()
+    
+    input_date= f"{day}{month}{year}"
+
+    process_csv_data(folder_path,input_date)
     
 main()

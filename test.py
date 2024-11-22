@@ -1,8 +1,28 @@
 import csv
+import os
 from collections import defaultdict
-from datetime import datetime
 
-def process_traffic_data(csv_file, input_date):
+# Function to validate and get date input
+def validate_date_input():
+    while True:
+        try:
+            # Ask for the date input in DD/MM/YYYY format
+            input_date = input("Enter the date (DD/MM/YYYY): ")
+            # Check if the date is in correct format
+            day, month, year = input_date.split('/')
+            # Ensure that the date is valid
+            if len(day) == 2 and len(month) == 2 and len(year) == 4:
+                return input_date  # Return the date in DD/MM/YYYY format
+            else:
+                print("Please enter the date in DD/MM/YYYY format.")
+        except ValueError:
+            print("Invalid date format. Please enter the date in DD/MM/YYYY format.")
+
+def process_traffic_data(folder_path, input_date):
+    # Extract the day, month, and year from the input_date
+    day, month, year = input_date.split('/')
+    formatted_date = f"{day}{month}{year}"
+
     # Initialize variables to store counts
     total_vehicles = 0
     total_trucks = 0
@@ -23,6 +43,18 @@ def process_traffic_data(csv_file, input_date):
     
     # Speed limit (this could be adjusted based on actual data)
     speed_limit = 30
+    
+    # Search for the correct CSV file in the folder
+    csv_file = None
+    for filename in os.listdir(folder_path):
+        if filename.endswith(f"{formatted_date}.csv"):
+            csv_file = os.path.join(folder_path, filename)
+            break
+    
+    # If no file is found, print an error and return
+    if csv_file is None:
+        print(f"Error: No file found for the date {input_date}")
+        return
     
     # Read the CSV file
     with open(csv_file, mode='r', newline='', encoding='utf-8') as file:
@@ -118,7 +150,9 @@ def process_traffic_data(csv_file, input_date):
 
 
 # Example usage:
-input_date = input("Enter the date (DD/MM/YYYY): ")  # Example: 25/06/2024
-csv_file_path = "traffic_data25062024.csv"  # Replace with your actual CSV file path
+folder_path = input("Enter the folder path containing the CSV files: ") # Example: "/path/to/folder
 
-process_traffic_data(csv_file_path, input_date)
+# Get the date input using the validate_date_input function
+input_date = validate_date_input()
+
+process_traffic_data(folder_path, input_date)
