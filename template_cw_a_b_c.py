@@ -7,6 +7,8 @@
 import csv
 import os
 from collections import defaultdict
+import pandas as pd
+
 
 
 def validate_date_input():
@@ -54,7 +56,6 @@ def validate_date_input():
     # Return the date in DD/MM/YYYY format
     return day, month, year
 
-
 def validate_continue_input():
     """
     Prompts the user to decide whether to load another dataset:
@@ -73,56 +74,57 @@ def process_csv_data(folder_path,input_date):
     - Two-wheeled vehicles, and other requested metrics
     """
     
-    # Initialize variables to store counts
-    total_vehicles = 0
-    total_trucks = 0
-    total_electric = 0
-    two_wheeled_vehicles = 0
-    buses_north_elm_avenue = 0
-    no_turn_vehicles = 0
-    vehicles_over_speed_limit = 0
-    elm_avenue_vehicles = 0
-    hanley_highway_vehicles = 0
-    scooter_percentage_elm_avenue = 0
-    peak_hour_data = defaultdict(int)
-    rain_hours = 0
-    elm_avenue_vehicles_only = 0
-    hanley_highway_vehicles_only = 0
-    total_bicycles = 0
-    total_hours = 0
-
+  
     
     csv_file = None
     for filename in os.listdir(folder_path):
         if filename.endswith(f"{input_date}.csv"):
             csv_file = os.path.join(folder_path, filename)
-            print (csv_file)
+            #print (f"the data file selected is {csv_file} ")
             break
-    
     # If no file is found, print an error and return
     if csv_file is None:
         print(f"Error: No file found for the date {input_date}")
         return
     
-    
     with open(csv_file, mode='r', newline='', encoding='utf-8') as file:
-        csv_reader = csv.DictReader(file)  # Reads the CSV into a dictionary format (fieldnames as keys)
+        reader = csv.DictReader(file)  # Read as a dictionary to access columns by name
         
-        # Iterate through the rows and get the 'VehicleType' column
-        for index, row in enumerate(csv_reader):
-            # Print the first value from the 'VehicleType' column
-            if index == 0:  # Only print the first value
-                print(f"First Vehicle Type: {row['VehicleType']}")
-                break  # Exit the loop after the first row
-        else:
-            print("The file is empty or doesn't have the 'VehicleType' column.")
-     
+        # Initialize counters
+        total_vehicles = 0
+        total_trucks = 0
+        electric_hybrid = 0
+        
+        # Iterate over each row and count based on conditions
+        for row in reader:
+            total_vehicles += 1
+            if row['VehicleType'].strip().lower() == 'truck':
+                total_trucks += 1
+            if row.get('elctricHybrid', '').strip().lower() == 'true':
+                electric_hybrid += 1
+    
+    # Results dictionary to store the calculated outcomes
+    results = {
+        "CSV File Selected": csv_file,
+        "The total number of vehicles for this date": total_vehicles,
+        "The Total number of trucks for this date": total_trucks,
+        "Electric Hybrid Vehicles": electric_hybrid
+    }
 
+    # Return the results dictionary
+    return results
+    
 def display_outcomes(outcomes):
     """
     Displays the calculated outcomes in a clear and formatted way.
     """
-    # Printing outcomes to the console
+    if outcomes is None:
+        print("No outcomes to display.")
+        return 
+    
+    # Loop through and print the results in a formatted way
+    for key, value in outcomes.items():
+        print(f"{key}: {value}")
 
 
 # Task C: Save Results to Text File
@@ -140,6 +142,7 @@ def main():
     
     input_date= f"{day}{month}{year}"
 
-    process_csv_data(folder_path,input_date)
+    outcomes=process_csv_data(folder_path,input_date)
+    display_outcomes(outcomes)
     
 main()
