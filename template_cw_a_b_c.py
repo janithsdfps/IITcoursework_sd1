@@ -7,9 +7,6 @@
 import csv
 import os
 from collections import defaultdict
-import pandas as pd
-
-
 
 def validate_date_input():
     
@@ -88,27 +85,88 @@ def process_csv_data(folder_path,input_date):
         return
     
     with open(csv_file, mode='r', newline='', encoding='utf-8') as file:
-        reader = csv.DictReader(file)  # Read as a dictionary to access columns by name
+        reader = csv.DictReader(file) 
         
         # Initialize counters
         total_vehicles = 0
         total_trucks = 0
         electric_hybrid = 0
+        two_wheeled = 0
+        busses_leaving_Elm_Avenue_Rabbit =0
+        vehicles_no_turning =0
+        percentage_trucks = 0
+        total_bicycle = 0
+        over_spead_limit=0
+        total_Elm_Avenue_Rabbit_Road =0
+        total_hanley_highway_westway = 0
+        total_sctr_rabbitRoad = 0
+        none=""
+        percentage_of_sctr_rabbit = 0
+        vehicles_by_hour = defaultdict(int)
+        
         
         # Iterate over each row and count based on conditions
         for row in reader:
             total_vehicles += 1
             if row['VehicleType'].strip().lower() == 'truck':
                 total_trucks += 1
-            if row.get('elctricHybrid', '').strip().lower() == 'true':
+            if row.get('elctricHybrid').strip().lower() == 'true':
                 electric_hybrid += 1
-    
+            if row.get('VehicleType').strip().lower() in ['bicycle', 'motorcycle', 'scooter']:
+                two_wheeled += 1
+            if row.get('VehicleType').strip().lower() == 'buss' and row.get('JunctionName').strip().lower() =='elm avenue/rabbit road' and row.get('travel_Direction_out').strip().lower() == 'n':
+                busses_leaving_Elm_Avenue_Rabbit +=1
+            if row.get('travel_Direction_in').strip().lower() == row.get('travel_Direction_out').strip().lower():
+                vehicles_no_turning += 1
+        
+            
+            if row.get('VehicleType').strip().lower() == 'bicycle':
+                total_bicycle+=1
+            
+            
+            if int (row.get('JunctionSpeedLimit')) < int( row.get('VehicleSpeed')):
+                over_spead_limit+=1
+                
+            if row.get('JunctionName').strip().lower() == 'elm avenue/rabbit road':
+                total_Elm_Avenue_Rabbit_Road +=1
+                
+            if row.get('JunctionName').strip().lower() == 'hanley highway/westway':
+                total_hanley_highway_westway +=1
+            
+            if row.get('JunctionName').strip().lower() == 'elm avenue/rabbit road' and row.get('VehicleType').strip().lower() == 'scooter' :
+                total_sctr_rabbitRoad +=1
+                
+            if row.get('JunctionName').strip().lower() == 'hanley highway/westway':
+        # Extract hour from timeOfDay (e.g., '00:41:24' -> '00')
+                hour = row.get('timeOfDay', '').split(':')[0]
+                vehicles_by_hour[hour] += 1
+                
+                 
+        avg_bike_per_hour = round (total_bicycle/24)
+        percentage_trucks = round((total_trucks / total_vehicles) * 100) 
+        percentage_of_sctr_rabbit = round((total_Elm_Avenue_Rabbit_Road / total_sctr_rabbitRoad))
+        busiest_hour, max_vehicles = max(vehicles_by_hour.items(), key=lambda x: x[1])
+      
+                
     # Results dictionary to store the calculated outcomes
+    strtxt = "The Total number of"
+    endtxt= "for this date"
     results = {
         "CSV File Selected": csv_file,
-        "The total number of vehicles for this date": total_vehicles,
-        "The Total number of trucks for this date": total_trucks,
-        "Electric Hybrid Vehicles": electric_hybrid
+        f"{strtxt} vehicles {endtxt}": total_vehicles,
+        f"{strtxt} trucks {endtxt}": total_trucks,
+        f"{strtxt} Electric Hybrid Vehicle{endtxt}": electric_hybrid,
+        f"{strtxt} Two wheeled vehicle {endtxt}": two_wheeled,
+        f"{strtxt} Busses leaving Elm Avenue/Rabbit Road heading North is " :busses_leaving_Elm_Avenue_Rabbit,
+        f"{strtxt} vehicle through both junction not turning left or right is " :vehicles_no_turning,
+        "Percentage of all vehicles recorded that are trucks" : f"{percentage_trucks}%",
+        f"Average number of bicycles per hour {endtxt}" : f"{avg_bike_per_hour}",
+        f"{strtxt} vehicle recorded as over the speed limit {endtxt} " : over_spead_limit,
+        f"{strtxt} vehicles records through Elm Avenue Rabbit Round junction is " : total_Elm_Avenue_Rabbit_Road,
+        f"{strtxt} vehicles records through Hanley Highway/Westway junction is " : total_hanley_highway_westway,
+        f"{strtxt} of vehicles recorded through Elm Avenue Rabbit Round are scooter ": f"{percentage_of_sctr_rabbit}%",
+        f"The peak hour on Hanley Highway/Westway is {busiest_hour}:00 with":f"{max_vehicles} vehicles"
+        
     }
 
     # Return the results dictionary
