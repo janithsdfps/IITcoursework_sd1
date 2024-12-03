@@ -103,6 +103,7 @@ def process_csv_data(folder_path,input_date):
         none=""
         percentage_of_sctr_rabbit = 0
         vehicles_by_hour = defaultdict(int)
+        total_rain_hour = []
         
         
         # Iterate over each row and count based on conditions
@@ -138,14 +139,26 @@ def process_csv_data(folder_path,input_date):
                 
             if row.get('JunctionName').strip().lower() == 'hanley highway/westway':
         # Extract hour from timeOfDay (e.g., '00:41:24' -> '00')
-                hour = row.get('timeOfDay', '').split(':')[0]
+                hour = row.get('timeOfDay').split(':')[0]
                 vehicles_by_hour[hour] += 1
                 
-                 
+            # Check weather conditions
+            if row.get('Weather_Conditions').strip().lower() == 'light rain':
+                # Extract hour
+                rain_hour = row.get('timeOfDay').split(':')[0]
+                # Add hour only if not already in the list
+                if rain_hour not in total_rain_hour:
+                    total_rain_hour.append(rain_hour)
+
+                            
+                
+                
+        total_rain_hour = len (total_rain_hour)         
         avg_bike_per_hour = round (total_bicycle/24)
         percentage_trucks = round((total_trucks / total_vehicles) * 100) 
         percentage_of_sctr_rabbit = round((total_Elm_Avenue_Rabbit_Road / total_sctr_rabbitRoad))
         busiest_hour, max_vehicles = max(vehicles_by_hour.items(), key=lambda x: x[1])
+        endrange= int (busiest_hour)+1
       
                 
     # Results dictionary to store the calculated outcomes
@@ -165,7 +178,9 @@ def process_csv_data(folder_path,input_date):
         f"{strtxt} vehicles records through Elm Avenue Rabbit Round junction is " : total_Elm_Avenue_Rabbit_Road,
         f"{strtxt} vehicles records through Hanley Highway/Westway junction is " : total_hanley_highway_westway,
         f"{strtxt} of vehicles recorded through Elm Avenue Rabbit Round are scooter ": f"{percentage_of_sctr_rabbit}%",
-        f"The peak hour on Hanley Highway/Westway is {busiest_hour}:00 with":f"{max_vehicles} vehicles"
+        "The highest number of vehicle in an hour  on Hanley Highway/Westway is ":f"{max_vehicles} vehicles",
+        "The most vehicle through Hanley Highway/westway were recorded between " : f"{busiest_hour}:00 and {endrange}:00",
+        f"{strtxt} hours of rain {endtxt}": total_rain_hour
         
     }
 
