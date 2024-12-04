@@ -58,6 +58,16 @@ def validate_continue_input():
     Prompts the user to decide whether to load another dataset:
     - Validates "Y" or "N" input
     """
+    choice  = None
+    
+    choice = input("Do you want to load another data set ? (Y / N) :")
+    choice = choice.upper()
+    if choice == "Y" :
+        main()
+    else:
+        print ("Task successfully done. please check the result.txt for output result")
+        
+    
     
 
 
@@ -100,7 +110,6 @@ def process_csv_data(folder_path,input_date):
         total_Elm_Avenue_Rabbit_Road =0
         total_hanley_highway_westway = 0
         total_sctr_rabbitRoad = 0
-        none=""
         percentage_of_sctr_rabbit = 0
         vehicles_by_hour = defaultdict(int)
         total_rain_hour = []
@@ -165,7 +174,7 @@ def process_csv_data(folder_path,input_date):
     strtxt = "The Total number of"
     endtxt= "for this date"
     results = {
-        "CSV File Selected": csv_file,
+        "CSV File Selected": f"{csv_file}" ,
         f"{strtxt} vehicles {endtxt}": total_vehicles,
         f"{strtxt} trucks {endtxt}": total_trucks,
         f"{strtxt} Electric Hybrid Vehicle{endtxt}": electric_hybrid,
@@ -198,6 +207,8 @@ def display_outcomes(outcomes):
     # Loop through and print the results in a formatted way
     for key, value in outcomes.items():
         print(f"{key}: {value}")
+        
+    save_results_to_file(outcomes)
 
 
 # Task C: Save Results to Text File
@@ -205,7 +216,21 @@ def save_results_to_file(outcomes, file_name="results.txt"):
     """
     Saves the processed outcomes to a text file and appends if the program loops.
     """
-    pass  # File writing logic goes here
+    try:
+        # Open the file in append mode
+        with open(file_name, "a") as file:
+            # Add a header to indicate a new set of results
+            file.write("\n--- New Results ---\n")
+            # Write each outcome key and value
+            for key, value in outcomes.items():
+                file.write(f"{key}: {value}\n")
+            # Add a footer for better readability
+            file.write("\n-------------------\n")
+        print(f"Results successfully saved to {file_name}.")
+    except Exception as e:
+        print(f"An error occurred while saving results: {e}")
+        
+    validate_continue_input()
 
 # if you have been contracted to do this assignment please do not remove this line
 
