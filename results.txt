@@ -119,3 +119,104 @@ The most vehicle through Hanley Highway/westway were recorded between : 18:00 an
 The Total number of hours of rain for this date: 0
 
 -------------------
+
+--- New Results ---
+CSV File Selected: c:/Users/ITS/OneDrive/Desktop/IIT docs/acadamic/SD/course work\traffic_data15062024.csv
+The Total number of vehicles for this date: 1037
+The Total number of trucks for this date: 109
+The Total number of Electric Hybrid Vehiclefor this date: 368
+The Total number of Two wheeled vehicle for this date: 401
+The Total number of Busses leaving Elm Avenue/Rabbit Road heading North is : 15
+The Total number of vehicle through both junction not turning left or right is : 363
+Percentage of all vehicles recorded that are trucks: 11%
+Average number of bicycles per hour for this date: 7
+The Total number of vehicle recorded as over the speed limit for this date : 205
+The Total number of vehicles records through Elm Avenue Rabbit Round junction is : 494
+The Total number of vehicles records through Hanley Highway/Westway junction is : 543
+The Total number of of vehicles recorded through Elm Avenue Rabbit Round are scooter : 10%
+The highest number of vehicle in an hour  on Hanley Highway/Westway is : 39 vehicles
+The most vehicle through Hanley Highway/westway were recorded between : 18:00 and 19:00
+The Total number of hours of rain for this date: 0
+
+-------------------
+
+--- New Results ---
+CSV File Selected: c:/Users/ITS/OneDrive/Desktop/IIT docs/acadamic/SD/course work\traffic_data16062024.csv
+The Total number of vehicles for this date: 101
+The Total number of trucks for this date: 11
+The Total number of Electric Hybrid Vehiclefor this date: 29
+The Total number of Two wheeled vehicle for this date: 29
+The Total number of Busses leaving Elm Avenue/Rabbit Road heading North is : 0
+The Total number of vehicle through both junction not turning left or right is : 38
+Percentage of all vehicles recorded that are trucks: 11%
+Average number of bicycles per hour for this date: 0
+The Total number of vehicle recorded as over the speed limit for this date : 20
+The Total number of vehicles records through Elm Avenue Rabbit Round junction is : 52
+The Total number of vehicles records through Hanley Highway/Westway junction is : 49
+The Total number of of vehicles recorded through Elm Avenue Rabbit Round are scooter : 17%
+The highest number of vehicle in an hour  on Hanley Highway/Westway is : 5 vehicles
+The most vehicle through Hanley Highway/westway were recorded between : 01:00 and 2:00
+The Total number of hours of rain for this date: 0
+
+-------------------
+
+--- New Results ---
+CSV File Selected: c:/Users/ITS/OneDrive/Desktop/IIT docs/acadamic/SD/course work\traffic_data21062024.csv
+The Total number of vehicles for this date: 1334
+The Total number of trucks for this date: 138
+The Total number of Electric Hybrid Vehiclefor this date: 442
+The Total number of Two wheeled vehicle for this date: 503
+The Total number of Busses leaving Elm Avenue/Rabbit Road heading North is : 19
+The Total number of vehicle through both junction not turning left or right is : 494
+Percentage of all vehicles recorded that are trucks: 10%
+Average number of bicycles per hour for this date: 10
+The Total number of vehicle recorded as over the speed limit for this date : 250
+The Total number of vehicles records through Elm Avenue Rabbit Round junction is : 651
+The Total number of vehicles records through Hanley Highway/Westway junction is : 683
+The Total number of of vehicles recorded through Elm Avenue Rabbit Round are scooter : 10%
+The highest number of vehicle in an hour  on Hanley Highway/Westway is : 71 vehicles
+The most vehicle through Hanley Highway/westway were recorded between : 18:00 and 19:00
+The Total number of hours of rain for this date: 6
+
+-------------------
+
+--- New Results ---
+CSV File Selected: c:/Users/ITS/OneDrive/Desktop/IIT docs/acadamic/SD/course work\traffic_data16062024.csv
+The Total number of vehicles for this date: 101
+The Total number of trucks for this date: 11
+The Total number of Electric Hybrid Vehiclefor this date: 29
+The Total number of Two wheeled vehicle for this date: 29
+The Total number of Busses leaving Elm Avenue/Rabbit Road heading North is : 0
+The Total number of vehicle through both junction not turning left or right is : 38
+Percentage of all vehicles recorded that are trucks: 11%
+Average number of bicycles per hour for this date: 0
+The Total number of vehicle recorded as over the speed limit for this date : 20
+The Total number of vehicles records through Elm Avenue Rabbit Round junction is : 52
+The Total number of vehicles records through Hanley Highway/Westway junction is : 49
+The Total number of of vehicles recorded through Elm Avenue Rabbit Round are scooter : 17%
+The highest number of vehicle in an hour  on Hanley Highway/Westway is : 5 vehicles
+The most vehicle through Hanley Highway/westway were recorded between : 01:00 and 2:00
+The Total number of hours of rain for this date: 3
+
+-------------------
+
+--- New Results ---
+CSV File Selected: c:/Users/ITS/OneDrive/Desktop/IIT docs/acadamic/SD/course work\traffic_data16062024.csv
+The Total number of vehicles for this date: 101
+The Total number of trucks for this date: 11
+The Total number of Electric Hybrid Vehiclefor this date: 29
+The Total number of Two wheeled vehicle for this date: 29
+The Total number of Busses leaving Elm Avenue/Rabbit Road heading North is : 0
+The Total number of vehicle through both junction not turning left or right is : 38
+Percentage of all vehicles recorded that are trucks: 11%
+Average number of bicycles per hour for this date: 0
+The Total number of vehicle recorded as over the speed limit for this date : 20
+The Total number of vehicles records through Elm Avenue Rabbit Round junction is : 52
+The Total number of vehicles records through Hanley Highway/Westway junction is : 49
+The Total number of of vehicles recorded through Elm Avenue Rabbit Round are scooter : 17%
+The highest number of vehicle in an hour  on Hanley Highway/Westway is : 5 vehicles
+The most vehicle through Hanley Highway/westway were recorded between : 01:00 and 2:00
+The Total number of hours of rain for this date: 0
+Total rain duration : 2 hours and 10 minutes.
+
+-------------------

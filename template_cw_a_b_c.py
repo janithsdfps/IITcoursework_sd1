@@ -1,4 +1,4 @@
-#Author:
+#Author:Chandira janith sirilal
 #Date:2024.11.20
 #Student ID:W2121265
 
@@ -7,6 +7,8 @@
 import csv
 import os
 from collections import defaultdict
+from datetime import datetime, timedelta
+
 
 def validate_date_input():
     
@@ -68,9 +70,6 @@ def validate_continue_input():
         print ("Task successfully done. please check the result.txt for output result")
         
     
-    
-
-
 # Task B: Processed Outcomes
 def process_csv_data(folder_path,input_date):
     """
@@ -113,6 +112,8 @@ def process_csv_data(folder_path,input_date):
         percentage_of_sctr_rabbit = 0
         vehicles_by_hour = defaultdict(int)
         total_rain_hour = []
+        rain_time = timedelta(0)  
+        previous_time = None    
         
         
         # Iterate over each row and count based on conditions
@@ -147,21 +148,23 @@ def process_csv_data(folder_path,input_date):
                 total_sctr_rabbitRoad +=1
                 
             if row.get('JunctionName').strip().lower() == 'hanley highway/westway':
-        # Extract hour from timeOfDay (e.g., '00:41:24' -> '00')
                 hour = row.get('timeOfDay').split(':')[0]
                 vehicles_by_hour[hour] += 1
                 
-            # Check weather conditions
-            if row.get('Weather_Conditions').strip().lower() == 'light rain':
-                # Extract hour
-                rain_hour = row.get('timeOfDay').split(':')[0]
-                # Add hour only if not already in the list
-                if rain_hour not in total_rain_hour:
-                    total_rain_hour.append(rain_hour)
+            weather = row.get('Weather_Conditions').strip().lower()    
+            if weather in ['light rain', 'heavy rain']:
+                current_time = datetime.strptime(row.get('timeOfDay'), '%H:%M:%S')                
+                
+                if previous_time:
+                    rain_time += current_time - previous_time
+                
+                previous_time = current_time
+            else:
+                previous_time = None
 
-                            
                 
-                
+        total_rain_hours, remainder = divmod(rain_time.total_seconds(), 3600)
+        total_rain_minutes = remainder // 60        
         total_rain_hour = len (total_rain_hour)         
         avg_bike_per_hour = round (total_bicycle/24)
         percentage_trucks = round((total_trucks / total_vehicles) * 100) 
@@ -189,7 +192,7 @@ def process_csv_data(folder_path,input_date):
         f"{strtxt} of vehicles recorded through Elm Avenue Rabbit Round are scooter ": f"{percentage_of_sctr_rabbit}%",
         "The highest number of vehicle in an hour  on Hanley Highway/Westway is ":f"{max_vehicles} vehicles",
         "The most vehicle through Hanley Highway/westway were recorded between " : f"{busiest_hour}:00 and {endrange}:00",
-        f"{strtxt} hours of rain {endtxt}": total_rain_hour
+        "Total rain duration " : f"{int(total_rain_hours)} hours and {int(total_rain_minutes)} minutes."
         
     }
 
