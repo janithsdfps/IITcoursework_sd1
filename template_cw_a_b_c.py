@@ -69,7 +69,6 @@ def validate_continue_input():
     else:
         print ("Task successfully done. please check the result.txt for output result")
         
-    
 # Task B: Processed Outcomes
 def process_csv_data(folder_path,input_date):
     """
@@ -79,9 +78,6 @@ def process_csv_data(folder_path,input_date):
     - Total electric vehicles
     - Two-wheeled vehicles, and other requested metrics
     """
-    
-  
-    
     csv_file = None
     for filename in os.listdir(folder_path):
         if filename.endswith(f"{input_date}.csv"):
