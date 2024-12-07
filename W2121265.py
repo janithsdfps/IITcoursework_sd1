@@ -123,6 +123,7 @@ def process_csv_data(folder_path,input_date):
     percentage_of_sctr_rabbit = 0
     vehicles_by_hour = {}
     rain_time = 0  
+    rain_times = []
     previous_time = None
     
  
@@ -168,22 +169,31 @@ def process_csv_data(folder_path,input_date):
             hour = row.get('timeOfDay', '').split(':')[0]
             vehicles_by_hour[hour] = vehicles_by_hour.get(hour, 0) + 1
         
+      
         # Manual rain time calculation
         weather = row.get('Weather_Conditions', '').strip().lower()
         if weather in ['light rain', 'heavy rain']:
             current_time = parse_time(row.get('timeOfDay', '00:00:00'))
-            
+            rain_times.append(current_time)
             if previous_time is not None:
                 # Calculate time difference in seconds
                 rain_time += current_time - previous_time if current_time >= previous_time else 0
-            
             previous_time = current_time
         else:
             previous_time = None
-    
-    # Calculations
-    total_rain_hours = rain_time // 3600
-    total_rain_minutes = (rain_time % 3600) // 60
+
+    # Sort the rain times in ascending order
+    rain_times.sort()
+
+    # Recalculate the total rain duration
+    total_rain_hours = 0
+    total_rain_minutes = 0
+    if rain_times:
+        start_time = rain_times[0]
+        end_time = rain_times[-1]
+        total_rain_seconds = end_time - start_time
+        total_rain_hours = total_rain_seconds // 3600
+        total_rain_minutes = (total_rain_seconds % 3600) // 60
     avg_bike_per_hour = round(total_bicycle / 24)
     percentage_trucks = round((total_trucks / total_vehicles) * 100)
     percentage_of_sctr_rabbit = round((total_Elm_Avenue_Rabbit_Road / total_sctr_rabbitRoad)) if total_sctr_rabbitRoad > 0 else 0
