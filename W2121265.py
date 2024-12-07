@@ -4,12 +4,6 @@
 
 # Task A: Input Validation
 
-import csv
-import os
-from collections import defaultdict
-from datetime import datetime, timedelta
-
-
 def validate_date_input():
     
     day = None
@@ -78,100 +72,130 @@ def process_csv_data(folder_path,input_date):
     - Total electric vehicles
     - Two-wheeled vehicles, and other requested metrics
     """
+    
     csv_file = None
-    for filename in os.listdir(folder_path):
-        if filename.endswith(f"{input_date}.csv"):
-            csv_file = os.path.join(folder_path, filename)
-            #print (f"the data file selected is {csv_file} ")
-            break
-    # If no file is found, print an error and return
-    if csv_file is None:
+    filename = f'traffic_data{input_date}.csv'
+    try:
+        full_path = folder_path + '/' + filename
+        with open(full_path, mode='r', encoding='utf-8') as file:
+            csv_file = full_path
+    except FileNotFoundError:
         print(f"Error: No file found for the date {input_date}")
         return
     
-    with open(csv_file, mode='r', newline='', encoding='utf-8') as file:
-        reader = csv.DictReader(file) 
+    # Manual CSV reading without CSV module
+    def read_csv_manually(file_path):
+        with open(file_path, mode='r', encoding='utf-8') as file:
+            # Read header
+            header = file.readline().strip().split(',')
+            # Read data rows
+            rows = [line.strip().split(',') for line in file]
+        return header, rows
+    
+    # Read the file
+    headers, data_rows = read_csv_manually(csv_file)
+    
+    # Create dictionary for easier access
+    def create_dict_rows(headers, rows):
+        dict_rows = []
+        for row in rows:
+            row_dict = {}
+            for i, header in enumerate(headers):
+                row_dict[header] = row[i]
+            dict_rows.append(row_dict)
+        return dict_rows
+    
+    rows = create_dict_rows(headers, data_rows)
+    
+    # Initialize counters
+    total_vehicles = 0
+    total_trucks = 0
+    electric_hybrid = 0
+    two_wheeled = 0
+    busses_leaving_Elm_Avenue_Rabbit = 0
+    vehicles_no_turning = 0
+    percentage_trucks = 0
+    total_bicycle = 0
+    over_spead_limit = 0
+    total_Elm_Avenue_Rabbit_Road = 0
+    total_hanley_highway_westway = 0
+    total_sctr_rabbitRoad = 0
+    percentage_of_sctr_rabbit = 0
+    vehicles_by_hour = {}
+    rain_time = 0  
+    previous_time = None
+    
+ 
+    def parse_time(time_str):
+        hours, minutes, seconds = map(int, time_str.split(':'))
+        return hours * 3600 + minutes * 60 + seconds
+    
+    # Iterate over each row and count based on conditions
+    for row in rows:
+        total_vehicles += 1
+        if row['VehicleType'].strip().lower() == 'truck':
+            total_trucks += 1
+        if row.get('elctricHybrid', '').strip().lower() == 'true':
+            electric_hybrid += 1
+        if row.get('VehicleType', '').strip().lower() in ['bicycle', 'motorcycle', 'scooter']:
+            two_wheeled += 1
+        if (row.get('VehicleType', '').strip().lower() == 'buss' and 
+            row.get('JunctionName', '').strip().lower() == 'elm avenue/rabbit road' and 
+            row.get('travel_Direction_out', '').strip().lower() == 'n'):
+            busses_leaving_Elm_Avenue_Rabbit += 1
+        if (row.get('travel_Direction_in', '').strip().lower() == 
+            row.get('travel_Direction_out', '').strip().lower()):
+            vehicles_no_turning += 1
         
-        # Initialize counters
-        total_vehicles = 0
-        total_trucks = 0
-        electric_hybrid = 0
-        two_wheeled = 0
-        busses_leaving_Elm_Avenue_Rabbit =0
-        vehicles_no_turning =0
-        percentage_trucks = 0
-        total_bicycle = 0
-        over_spead_limit=0
-        total_Elm_Avenue_Rabbit_Road =0
-        total_hanley_highway_westway = 0
-        total_sctr_rabbitRoad = 0
-        percentage_of_sctr_rabbit = 0
-        vehicles_by_hour = defaultdict(int)
-        total_rain_hour = []
-        rain_time = timedelta(0)  
-        previous_time = None    
+        if row.get('VehicleType', '').strip().lower() == 'bicycle':
+            total_bicycle += 1
         
+        if int(row.get('JunctionSpeedLimit', 0)) < int(row.get('VehicleSpeed', 0)):
+            over_spead_limit += 1
         
-        # Iterate over each row and count based on conditions
-        for row in reader:
-            total_vehicles += 1
-            if row['VehicleType'].strip().lower() == 'truck':
-                total_trucks += 1
-            if row.get('elctricHybrid').strip().lower() == 'true':
-                electric_hybrid += 1
-            if row.get('VehicleType').strip().lower() in ['bicycle', 'motorcycle', 'scooter']:
-                two_wheeled += 1
-            if row.get('VehicleType').strip().lower() == 'buss' and row.get('JunctionName').strip().lower() =='elm avenue/rabbit road' and row.get('travel_Direction_out').strip().lower() == 'n':
-                busses_leaving_Elm_Avenue_Rabbit +=1
-            if row.get('travel_Direction_in').strip().lower() == row.get('travel_Direction_out').strip().lower():
-                vehicles_no_turning += 1
+        if row.get('JunctionName', '').strip().lower() == 'elm avenue/rabbit road':
+            total_Elm_Avenue_Rabbit_Road += 1
         
+        if row.get('JunctionName', '').strip().lower() == 'hanley highway/westway':
+            total_hanley_highway_westway += 1
+        
+        if (row.get('JunctionName', '').strip().lower() == 'elm avenue/rabbit road' and 
+            row.get('VehicleType', '').strip().lower() == 'scooter'):
+            total_sctr_rabbitRoad += 1
+        
+        # Manual hour tracking
+        if row.get('JunctionName', '').strip().lower() == 'hanley highway/westway':
+            hour = row.get('timeOfDay', '').split(':')[0]
+            vehicles_by_hour[hour] = vehicles_by_hour.get(hour, 0) + 1
+        
+        # Manual rain time calculation
+        weather = row.get('Weather_Conditions', '').strip().lower()
+        if weather in ['light rain', 'heavy rain']:
+            current_time = parse_time(row.get('timeOfDay', '00:00:00'))
             
-            if row.get('VehicleType').strip().lower() == 'bicycle':
-                total_bicycle+=1
+            if previous_time is not None:
+                # Calculate time difference in seconds
+                rain_time += current_time - previous_time if current_time >= previous_time else 0
             
-            
-            if int (row.get('JunctionSpeedLimit')) < int( row.get('VehicleSpeed')):
-                over_spead_limit+=1
-                
-            if row.get('JunctionName').strip().lower() == 'elm avenue/rabbit road':
-                total_Elm_Avenue_Rabbit_Road +=1
-                
-            if row.get('JunctionName').strip().lower() == 'hanley highway/westway':
-                total_hanley_highway_westway +=1
-            
-            if row.get('JunctionName').strip().lower() == 'elm avenue/rabbit road' and row.get('VehicleType').strip().lower() == 'scooter' :
-                total_sctr_rabbitRoad +=1
-                
-            if row.get('JunctionName').strip().lower() == 'hanley highway/westway':
-                hour = row.get('timeOfDay').split(':')[0]
-                vehicles_by_hour[hour] += 1
-                
-            weather = row.get('Weather_Conditions').strip().lower()    
-            if weather in ['light rain', 'heavy rain']:
-                current_time = datetime.strptime(row.get('timeOfDay'), '%H:%M:%S')                
-                
-                if previous_time:
-                    rain_time += current_time - previous_time
-                
-                previous_time = current_time
-            else:
-                previous_time = None
-
-                
-        total_rain_hours, remainder = divmod(rain_time.total_seconds(), 3600)
-        total_rain_minutes = remainder // 60        
-        total_rain_hour = len (total_rain_hour)         
-        avg_bike_per_hour = round (total_bicycle/24)
-        percentage_trucks = round((total_trucks / total_vehicles) * 100) 
-        percentage_of_sctr_rabbit = round((total_Elm_Avenue_Rabbit_Road / total_sctr_rabbitRoad))
-        busiest_hour, max_vehicles = max(vehicles_by_hour.items(), key=lambda x: x[1])
-        endrange= int (busiest_hour)+1
-      
-                
-    # Results dictionary to store the calculated outcomes
+            previous_time = current_time
+        else:
+            previous_time = None
+    
+    # Calculations
+    total_rain_hours = rain_time // 3600
+    total_rain_minutes = (rain_time % 3600) // 60
+    avg_bike_per_hour = round(total_bicycle / 24)
+    percentage_trucks = round((total_trucks / total_vehicles) * 100)
+    percentage_of_sctr_rabbit = round((total_Elm_Avenue_Rabbit_Road / total_sctr_rabbitRoad)) if total_sctr_rabbitRoad > 0 else 0
+    
+    # Find busiest hour
+    busiest_hour = max(vehicles_by_hour, key=vehicles_by_hour.get) if vehicles_by_hour else '0'
+    max_vehicles = vehicles_by_hour.get(busiest_hour, 0)
+    endrange = int(busiest_hour) + 1
+    
+    # Results dictionary
     strtxt = "The Total number of"
-    endtxt= "for this date"
+    endtxt = "for this date"
     results = {
         "CSV File Selected": f"{csv_file}" ,
         f"{strtxt} vehicles {endtxt}": total_vehicles,
@@ -189,7 +213,6 @@ def process_csv_data(folder_path,input_date):
         "The highest number of vehicle in an hour  on Hanley Highway/Westway is ":f"{max_vehicles} vehicles",
         "The most vehicle through Hanley Highway/westway were recorded between " : f"{busiest_hour}:00 and {endrange}:00",
         "Total rain duration " : f"{int(total_rain_hours)} hours and {int(total_rain_minutes)} minutes."
-        
     }
 
     # Return the results dictionary
@@ -234,7 +257,7 @@ def save_results_to_file(outcomes, file_name="results.txt"):
 # if you have been contracted to do this assignment please do not remove this line
 
 def main():
-    folder_path = input("Enter the folder path containing the CSV files: ")
+    folder_path = "c:/Users/ITS/OneDrive/Desktop/IIT docs/acadamic/SD/course work"
     day , month, year = validate_date_input()
     
     input_date= f"{day}{month}{year}"
